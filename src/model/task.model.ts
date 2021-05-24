@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 
 import sequalize from "../utils/database";
+import TaskFile from "./task-file";
 
 interface TaskAttributes {
     id: number;
@@ -37,7 +38,7 @@ const Task = sequalize.define<TaskInstance>("Task", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    hoursSpent: DataTypes.NUMBER,
+    hoursSpent: DataTypes.INTEGER,
     minStart: DataTypes.DATE,
     maxStart: {
         type: DataTypes.DATE,
@@ -45,11 +46,33 @@ const Task = sequalize.define<TaskInstance>("Task", {
     },
     minEnd: DataTypes.DATE,
     maxEnd: { type: DataTypes.DATE, allowNull: false },
-    projectId: DataTypes.NUMBER,
-    parentTaskId: { type: DataTypes.NUMBER, allowNull: true },
-    responsibleUserId: DataTypes.NUMBER,
-    statusId: DataTypes.NUMBER,
-    priorityId: DataTypes.NUMBER,
+    projectId: DataTypes.INTEGER,
+    parentTaskId: { type: DataTypes.INTEGER, allowNull: true },
+    responsibleUserId: DataTypes.INTEGER,
+    statusId: DataTypes.INTEGER,
+    priorityId: DataTypes.INTEGER,
+});
+
+Task.hasMany(TaskFile, {
+    sourceKey: "id",
+    foreignKey: "ownerTaskId",
+    as: "files",
+});
+
+TaskFile.belongsTo(Task, {
+    foreignKey: "ownerTaskId",
+    as: "ownerTask",
+});
+
+Task.hasMany(Task, {
+    sourceKey: "id",
+    foreignKey: "parentTaskId",
+    as: "childrenTasks",
+});
+
+Task.belongsTo(Task, {
+    foreignKey: "parentTaskId",
+    as: "parentTask",
 });
 
 export default Task;

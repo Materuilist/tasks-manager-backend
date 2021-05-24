@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 
 import sequalize from "../utils/database";
+import Task from "./task.model";
 
 interface TaskStatusAttributes {
     id: number;
@@ -27,7 +28,18 @@ const TaskStatus = sequalize.define<TaskStatusInstance>("TaskStatus", {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
-    }
+    },
+});
+
+TaskStatus.hasMany(Task, {
+    sourceKey: "id",
+    foreignKey: "statusId",
+    as: "tasks",
+});
+
+Task.belongsTo(TaskStatus, {
+    foreignKey: "statusId",
+    as: "status",
 });
 
 export default TaskStatus;

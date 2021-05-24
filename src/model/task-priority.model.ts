@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 
 import sequalize from "../utils/database";
+import Task from "./task.model";
 
 interface TaskPriorityAttributes {
     id: number;
@@ -27,7 +28,18 @@ const TaskPriority = sequalize.define<TaskPriorityInstance>("TaskPriority", {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
-    }
+    },
+});
+
+TaskPriority.hasMany(Task, {
+    sourceKey: "id",
+    foreignKey: "priorityId",
+    as: "tasks",
+});
+
+Task.belongsTo(TaskPriority, {
+    foreignKey: "priorityId",
+    as: "priority",
 });
 
 export default TaskPriority;

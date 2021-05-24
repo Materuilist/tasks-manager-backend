@@ -1,6 +1,8 @@
 import { DataTypes, Model, Optional } from "sequelize";
 
 import sequalize from "../utils/database";
+import Task from "./task.model";
+import UserProjectRole from "./user-project-role.model";
 
 interface UserAttributes {
     id: number;
@@ -32,6 +34,28 @@ const User = sequalize.define<UserInstance>("user", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+});
+
+User.hasMany(UserProjectRole, {
+    sourceKey: "id",
+    foreignKey: "userId",
+    as: "projectsRoles",
+});
+
+UserProjectRole.belongsTo(User, {
+    foreignKey: "userId",
+    as: "user",
+});
+
+User.hasMany(Task, {
+    sourceKey: "id",
+    foreignKey: "responsibleUserId",
+    as: "tasks",
+});
+
+Task.belongsTo(User, {
+    foreignKey: "responsibleUserId",
+    as: "responsibleUser",
 });
 
 export default User;
