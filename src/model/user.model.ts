@@ -40,6 +40,7 @@ User.hasMany(UserProjectRole, {
     sourceKey: "id",
     foreignKey: "userId",
     as: "projectsRoles",
+    onDelete: "CASCADE",
 });
 
 UserProjectRole.belongsTo(User, {

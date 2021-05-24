@@ -13,7 +13,7 @@ interface TaskAttributes {
     maxEnd: Date;
     projectId: number;
     parentTaskId: number | null;
-    responsibleUserId: number;
+    responsibleUserId: number | null;
     statusId: number;
     priorityId: number;
 }
@@ -48,7 +48,7 @@ const Task = sequalize.define<TaskInstance>("Task", {
     maxEnd: { type: DataTypes.DATE, allowNull: false },
     projectId: DataTypes.INTEGER,
     parentTaskId: { type: DataTypes.INTEGER, allowNull: true },
-    responsibleUserId: DataTypes.INTEGER,
+    responsibleUserId: { type: DataTypes.INTEGER, allowNull: true },
     statusId: DataTypes.INTEGER,
     priorityId: DataTypes.INTEGER,
 });
@@ -57,6 +57,7 @@ Task.hasMany(TaskFile, {
     sourceKey: "id",
     foreignKey: "ownerTaskId",
     as: "files",
+    onDelete: "CASCADE",
 });
 
 TaskFile.belongsTo(Task, {
@@ -68,6 +69,7 @@ Task.hasMany(Task, {
     sourceKey: "id",
     foreignKey: "parentTaskId",
     as: "childrenTasks",
+    onDelete: "CASCADE",
 });
 
 Task.belongsTo(Task, {
