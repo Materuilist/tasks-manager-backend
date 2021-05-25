@@ -6,14 +6,15 @@ import TaskFile from "./task-file";
 interface TaskAttributes {
     id: number;
     title: string;
-    hoursSpent: number;
-    minStart: Date;
+    description: string;
+    hoursSpent?: number;
+    minStart?: Date;
     maxStart: Date;
-    minEnd: Date;
+    minEnd?: Date;
     maxEnd: Date;
     projectId: number;
-    parentTaskId: number | null;
-    responsibleUserId: number | null;
+    parentTaskId?: number;
+    responsibleUserId?: number;
     statusId: number;
     priorityId: number;
 }
@@ -38,6 +39,7 @@ const Task = sequalize.define<TaskInstance>("Task", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    description: DataTypes.TEXT,
     hoursSpent: DataTypes.INTEGER,
     minStart: DataTypes.DATE,
     maxStart: {

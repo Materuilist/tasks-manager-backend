@@ -18,7 +18,7 @@ interface UserRoleInstance
     updatedAt?: Date;
 }
 
-const UserRole = sequalize.define<UserRoleInstance>("user", {
+const UserRole = sequalize.define<UserRoleInstance>("UserRole", {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,

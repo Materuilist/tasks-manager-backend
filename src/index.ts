@@ -1,9 +1,11 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 
+import initDb from "./utils/initDb";
 import sequalize from "./utils/database";
 
 import authRouter from "./routes/auth.router";
+import projectRouter from "./routes/project.router";
 
 const app = express();
 
@@ -18,6 +20,7 @@ app.use((req, res, next) => {
 app.use("/", bodyParser.json({ limit: "5mb" }));
 
 app.use("/api/auth", authRouter);
+app.use("/api/project", projectRouter);
 
 app.use("/", (error, req, res, next) => {
     if (error) {
@@ -29,5 +32,6 @@ app.use("/", (error, req, res, next) => {
 sequalize.sync().then(() => {
     app.listen(8000, () => {
         console.log(`I'm listening!`);
+        initDb(true, true);
     });
 });

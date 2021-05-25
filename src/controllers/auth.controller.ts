@@ -52,8 +52,6 @@ export const signIn = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
     const { user } = req.body;
-    if (!user) {
-        return next(new Error(401, "Токен не действителен!"));
-    }
+    
     res.status(200).json({ userInfo: { login: user.login } });
 };

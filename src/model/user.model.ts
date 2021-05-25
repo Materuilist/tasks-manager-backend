@@ -19,7 +19,7 @@ interface UserInstance
     updatedAt?: Date;
 }
 
-const User = sequalize.define<UserInstance>("user", {
+const User = sequalize.define<UserInstance>("User", {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
