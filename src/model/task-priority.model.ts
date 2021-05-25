@@ -8,11 +8,8 @@ interface TaskPriorityAttributes {
     name: string;
 }
 
-interface TaskPriorityCreationAttributes
-    extends Optional<TaskPriorityAttributes, "id"> {}
-
 interface TaskPriorityInstance
-    extends Model<TaskPriorityAttributes, TaskPriorityCreationAttributes>,
+    extends Model<TaskPriorityAttributes>,
         TaskPriorityAttributes {
     createdAt?: Date;
     updatedAt?: Date;
@@ -22,7 +19,6 @@ const TaskPriority = sequalize.define<TaskPriorityInstance>("TaskPriority", {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
     },
     name: {

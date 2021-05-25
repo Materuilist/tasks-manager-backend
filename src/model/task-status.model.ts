@@ -8,11 +8,8 @@ interface TaskStatusAttributes {
     name: string;
 }
 
-interface TaskStatusCreationAttributes
-    extends Optional<TaskStatusAttributes, "id"> {}
-
 interface TaskStatusInstance
-    extends Model<TaskStatusAttributes, TaskStatusCreationAttributes>,
+    extends Model<TaskStatusAttributes>,
         TaskStatusAttributes {
     createdAt?: Date;
     updatedAt?: Date;
@@ -22,7 +19,6 @@ const TaskStatus = sequalize.define<TaskStatusInstance>("TaskStatus", {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
     },
     name: {

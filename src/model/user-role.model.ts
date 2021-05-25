@@ -8,11 +8,8 @@ interface UserRoleAttributes {
     name: string;
 }
 
-interface UserRoleCreationAttributes
-    extends Optional<UserRoleAttributes, "id"> {}
-
 interface UserRoleInstance
-    extends Model<UserRoleAttributes, UserRoleCreationAttributes>,
+    extends Model<UserRoleAttributes>,
         UserRoleAttributes {
     createdAt?: Date;
     updatedAt?: Date;
@@ -22,7 +19,6 @@ const UserRole = sequalize.define<UserRoleInstance>("UserRole", {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
     },
     name: {

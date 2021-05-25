@@ -7,6 +7,15 @@ import sequalize from "./database";
 import User from "../model/user.model";
 import Encrypter from "../services/encrypter";
 import UserProjectRole from "../model/user-project-role.model";
+import {
+    TaskPriorityEnum,
+    getTaskPriorityName,
+} from "../constants/task.priority.enum";
+import {
+    TaskStatusEnum,
+    getTaskStatusName,
+} from "../constants/task.status.enum";
+import { UserRoleEnum, getUserRoleName } from "../constants/user.role.eumn";
 
 export default async (deleteAllDbs = false, createTestData = false) => {
     if (deleteAllDbs) {
@@ -16,52 +25,58 @@ export default async (deleteAllDbs = false, createTestData = false) => {
     /* *************** dictionaries *************** */
     TaskPriority.bulkCreate([
         {
-            name: "Критический",
+            id: TaskPriorityEnum.critical,
+            name: getTaskPriorityName(TaskPriorityEnum.critical),
         },
         {
-            name: "Высокий",
+            id: TaskPriorityEnum.high,
+            name: getTaskPriorityName(TaskPriorityEnum.high),
         },
         {
-            name: "Основной",
+            id: TaskPriorityEnum.main,
+            name: getTaskPriorityName(TaskPriorityEnum.main),
         },
         {
-            name: "Низкий",
+            id: TaskPriorityEnum.low,
+            name: getTaskPriorityName(TaskPriorityEnum.low),
         },
     ]);
 
     TaskStatus.bulkCreate([
         {
-            name: "Новая",
+            id: TaskStatusEnum.new,
+            name: getTaskStatusName(TaskStatusEnum.new),
         },
         {
-            name: "В работе",
+            id: TaskStatusEnum.inProgress,
+            name: getTaskStatusName(TaskStatusEnum.inProgress),
         },
         {
-            name: "Решена",
+            id: TaskStatusEnum.solved,
+            name: getTaskStatusName(TaskStatusEnum.solved),
         },
         {
-            name: "Приостановлена",
+            id: TaskStatusEnum.suspended,
+            name: getTaskStatusName(TaskStatusEnum.suspended),
         },
         {
-            name: "Закрыта",
+            id: TaskStatusEnum.closed,
+            name: getTaskStatusName(TaskStatusEnum.closed),
         },
     ]);
 
     UserRole.bulkCreate([
         {
-            name: "Руководитель проекта",
+            id: UserRoleEnum.rp,
+            name: getUserRoleName(UserRoleEnum.rp),
         },
         {
-            name: "Менеджер",
+            id: UserRoleEnum.manager,
+            name: getUserRoleName(UserRoleEnum.manager),
         },
         {
-            name: "Аналитик",
-        },
-        {
-            name: "Разработчик",
-        },
-        {
-            name: "Дизайнер",
+            id: UserRoleEnum.executor,
+            name: getUserRoleName(UserRoleEnum.executor),
         },
     ]);
     /* *************** end dictionaries *************** */
@@ -93,12 +108,12 @@ export default async (deleteAllDbs = false, createTestData = false) => {
     UserProjectRole.bulkCreate([
         {
             projectId: 1,
-            roleId: 3,
+            roleId: UserRoleEnum.executor,
             userId: 1,
         },
         {
             projectId: 1,
-            roleId:4,
+            roleId: UserRoleEnum.manager,
             userId: 2,
         },
     ]);
@@ -109,9 +124,9 @@ export default async (deleteAllDbs = false, createTestData = false) => {
             description: "Создание проекта",
             maxStart: new Date(),
             maxEnd: new Date("2021-06-07"),
-            priorityId: 1,
+            priorityId: TaskPriorityEnum.main,
             projectId: 1,
-            statusId: 1,
+            statusId: TaskStatusEnum.closed,
             responsibleUserId: 1,
         },
         {
@@ -119,9 +134,9 @@ export default async (deleteAllDbs = false, createTestData = false) => {
             description: "Развитие проекта",
             maxStart: new Date("2021-06-08"),
             maxEnd: new Date("2021-06-10"),
-            priorityId: 1,
+            priorityId: TaskPriorityEnum.high,
             projectId: 2,
-            statusId: 3,
+            statusId: TaskStatusEnum.inProgress,
             responsibleUserId: 2,
         },
     ]);
