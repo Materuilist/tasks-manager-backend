@@ -1,4 +1,10 @@
 import { RequestHandler } from "express";
+import { Op } from "sequelize";
+
+import UserProjectRole from "../model/user-project-role.model";
+import { UserRoleEnum } from "../constants/user.role.eumn";
+import { isNewTaskDTO, NewTaskDTO } from "../entities/dto-in/new-task.dto";
+import Error from "../entities/shared/error";
 import TaskPriority from "../model/task-priority.model";
 import TaskStatus from "../model/task-status.model";
 import Task from "../model/task.model";
@@ -40,4 +46,90 @@ export const getTasks: RequestHandler = async (req, res, next) => {
     });
 
     res.status(200).json({ tasks });
+};
+
+export const createTask: RequestHandler<
+    unknown,
+    unknown,
+    { user; task: NewTaskDTO; projectId: number }
+> = async (req, res, next) => {
+    const { user: currentUser, task, projectId } = req.body;
+
+    if (typeof projectId !== "number") {
+        return next(new Error(400, "Не указан проект!"));
+    }
+
+    if (!isNewTaskDTO(task)) {
+        return next(new Error(400, "Неверный формат задания!"));
+    }
+
+    const isUserAllowedToManageTasks =
+        (
+            await UserProjectRole.findAll({
+                where: {
+                    userId: currentUser.id,
+                    projectId,
+                    roleId: {
+                        [Op.in]: [UserRoleEnum.rp, UserRoleEnum.manager],
+                    },
+                },
+            })
+        ).length !== 0;
+
+    if (!isUserAllowedToManageTasks) {
+        return next(
+            new Error(
+                401,
+                "Текущему пользователю не разрешено создавать задачи на данном проекте!"
+            )
+        );
+    }
+
+    const sameTitleTaskExists = Boolean(
+        await Task.findOne({
+            where: { title: task.title, projectId },
+        })
+    );
+    if (sameTitleTaskExists) {
+        return next(
+            new Error(
+                400,
+                "Задача с таким названием существует на данном проекте!"
+            )
+        );
+    }
+
+    const responsibleUserFits =
+        !task.responsibleUserId ||
+        Boolean(
+            await UserProjectRole.findOne({
+                where: {
+                    userId: task.responsibleUserId,
+                    projectId,
+                    roleId: UserRoleEnum.executor,
+                },
+            })
+        );
+    if (!responsibleUserFits) {
+        return next(
+            new Error(404, "На этом проекте нет указанного исполнителя!")
+        );
+    }
+
+    const createdTask = await Task.create({
+        title: task.title,
+        description: task.description ?? "",
+        maxEnd: task.maxEnd,
+        maxStart: task.maxStart,
+        priorityId: task.priorityId,
+        statusId: task.statusId,
+        projectId,
+        hoursSpent: 0,
+        minEnd: task.minEnd ?? null,
+        minStart: task.minEnd ?? null,
+        parentTaskId: task.parentTaskId ?? null,
+        responsibleUserId: task.responsibleUserId ?? null,
+    });
+
+    res.status(201).json({ createdTask });
 };

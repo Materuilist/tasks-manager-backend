@@ -91,7 +91,7 @@ export const setTeam: RequestHandler<
     unknown,
     { user; teamMembers: TeamMemberDTO[]; projectId: number }
 > = async (req, res, next) => {
-    let { user: currentUser, teamMembers, projectId } = req.body;
+    const { user: currentUser, teamMembers, projectId } = req.body;
 
     if (typeof projectId !== "number") {
         return next(new Error(400, "Не указан проект!"));
