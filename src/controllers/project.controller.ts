@@ -1,10 +1,10 @@
 import { RequestHandler } from "express";
-import { literal } from "sequelize";
+import { literal, Op } from "sequelize";
 
 import Project from "../model/project.model";
 import UserProjectRole from "../model/user-project-role.model";
 import Error from "../entities/shared/error";
-import { UserRoleEnum } from "../constants/user.role.eumn";
+import { getUserRoleName, UserRoleEnum } from "../constants/user.role.eumn";
 import UserRole from "../model/user-role.model";
 import User from "../model/user.model";
 import {
@@ -98,8 +98,8 @@ export const setTeam: RequestHandler<
     }
 
     const projectExists = Boolean(await Project.findByPk(projectId));
-    if(!projectExists){
-        return next(new Error(404, 'Проект не найден!'))
+    if (!projectExists) {
+        return next(new Error(404, "Проект не найден!"));
     }
 
     const areTeamMembersFilledRight = teamMembers.reduce(
@@ -110,8 +110,37 @@ export const setTeam: RequestHandler<
         return next(new Error(400, "Неправильно заполнены участники команды!"));
     }
 
-    const teamMembersLoginsErrorText = await Promise.all(
+    const currentTeam = await UserProjectRole.findAll({
+        where: {
+            projectId,
+        },
+        include: {
+            model: User,
+            as: "user",
+            attributes: ["id", "login"],
+        },
+    });
+
+    const isUserProjectOwner = Boolean(
+        currentTeam.find(
+            (teamMember) =>
+                teamMember.roleId === UserRoleEnum.rp &&
+                (teamMember as any).user.id === currentUser.id
+        )
+    );
+    if (!isUserProjectOwner) {
+        return next(
+            new Error(
+                400,
+                "Текущий пользователь не является руководителем проекта и не имеет прав изменять команду!"
+            )
+        );
+    }
+
+    const teamMembersErrorText = await Promise.all(
         teamMembers.map(async (member) => {
+            let memberErrorsText = "";
+
             const userWithSameNickname = await User.findOne({
                 where: {
                     login: member.login,
@@ -120,28 +149,52 @@ export const setTeam: RequestHandler<
 
             if (member.createNew) {
                 if (userWithSameNickname) {
-                    return `Создаваемый пользователь "${member.login}" должен иметь уникальный логин!\n`;
+                    memberErrorsText += `Создаваемый пользователь "${member.login}" должен иметь уникальный логин!\n`;
                 }
                 if (
                     typeof member.password !== "string" ||
                     !member.password.length
                 ) {
-                    return `Создаваемый пользователь "${member.login}" должен иметь пароль!\n`;
+                    memberErrorsText += `Создаваемый пользователь "${member.login}" должен иметь пароль!\n`;
                 }
             } else {
                 if (!userWithSameNickname) {
-                    return `Нет пользователя с логином ${member.login}, хотя он не указан как создаваемый!\n`;
+                    memberErrorsText += `Нет пользователя с логином ${member.login}, хотя он не указан как создаваемый!\n`;
                 }
             }
 
-            return "";
+            if (member.roleId === UserRoleEnum.rp) {
+                memberErrorsText += `Попытка присвоить пользователю ${member.login} роль руководителя проекта!\n`;
+            }
+
+            const isTryingToDowngradeRp = Boolean(
+                currentTeam.find(
+                    (oldMember) =>
+                        oldMember.roleId === UserRoleEnum.rp &&
+                        (oldMember as any).user.login === member.login &&
+                        member.roleId !== UserRoleEnum.rp
+                )
+            );
+            if (isTryingToDowngradeRp) {
+                memberErrorsText += `Попытка понизить руководителя проекта ${member.login}!\n`;
+            }
+
+            const isTryingToAddMultipleSameLoginUsers =
+                teamMembers.filter(
+                    (newMember) => newMember.login === member.login
+                ).length > 1;
+            if (isTryingToAddMultipleSameLoginUsers) {
+                memberErrorsText += `Логин ${member.login} повторяется!\n`;
+            }
+
+            return memberErrorsText;
         })
     ).then((errorTexts) => errorTexts.join(""));
-    if (teamMembersLoginsErrorText) {
-        return next(new Error(400, teamMembersLoginsErrorText));
+    if (teamMembersErrorText) {
+        return next(new Error(400, teamMembersErrorText));
     }
 
-    const createdTeam = await Promise.all(
+    const newTeam = await Promise.all(
         teamMembers.map(async (member) => {
             const user = await (member.createNew
                 ? User.create({
@@ -176,5 +229,27 @@ export const setTeam: RequestHandler<
         })
     );
 
-    res.status(200).json({ createdTeam });
+    const usersIdsToDelete = currentTeam
+        .filter(
+            (teamMember) =>
+                teamMember.roleId !== UserRoleEnum.rp &&
+                !teamMembers.some(
+                    (actualMember) =>
+                        actualMember.login === (teamMember as any).user.login
+                )
+        )
+        .map(({ userId }) => userId);
+
+    usersIdsToDelete.length &&
+        (await UserProjectRole.destroy({
+            where: {
+                userId: {
+                    [Op.in]: usersIdsToDelete,
+                },
+            },
+        }));
+
+    res.status(200).json({
+        newTeam,
+    });
 };

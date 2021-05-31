@@ -99,21 +99,17 @@ export default async (deleteAllDbs = false, createTestData = false) => {
             title: "test proj 1",
             description: "about test proj 1",
         },
-        {
-            title: "test proj 2",
-            description: "about test proj 2",
-        },
     ]);
 
     UserProjectRole.bulkCreate([
         {
             projectId: 1,
-            roleId: UserRoleEnum.executor,
+            roleId: UserRoleEnum.rp,
             userId: 1,
         },
         {
             projectId: 1,
-            roleId: UserRoleEnum.manager,
+            roleId: UserRoleEnum.executor,
             userId: 2,
         },
     ]);
@@ -127,7 +123,7 @@ export default async (deleteAllDbs = false, createTestData = false) => {
             priorityId: TaskPriorityEnum.main,
             projectId: 1,
             statusId: TaskStatusEnum.closed,
-            responsibleUserId: 1,
+            responsibleUserId: 2,
         },
         {
             title: "Развить проект",
@@ -135,7 +131,7 @@ export default async (deleteAllDbs = false, createTestData = false) => {
             maxStart: new Date("2021-06-08"),
             maxEnd: new Date("2021-06-10"),
             priorityId: TaskPriorityEnum.high,
-            projectId: 2,
+            projectId: 1,
             statusId: TaskStatusEnum.inProgress,
             responsibleUserId: 2,
         },
