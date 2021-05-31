@@ -4,11 +4,14 @@ import { Op } from "sequelize";
 import UserProjectRole from "../model/user-project-role.model";
 import { UserRoleEnum } from "../constants/user.role.eumn";
 import { isNewTaskDTO, NewTaskDTO } from "../entities/dto-in/new-task.dto";
+import {
+    isUpdateTaskDTO,
+    UpdateTaskDTO,
+} from "../entities/dto-in/update-task.dto";
 import Error from "../entities/shared/error";
 import TaskPriority from "../model/task-priority.model";
 import TaskStatus from "../model/task-status.model";
 import Task from "../model/task.model";
-import Project from "../model/project.model";
 
 export const getTasks: RequestHandler = async (req, res, next) => {
     const { user: currentUser } = req.body;
@@ -26,6 +29,7 @@ export const getTasks: RequestHandler = async (req, res, next) => {
         attributes: taskAttributesToShow,
         where: {
             responsibleUserId: currentUser.id,
+            parentTaskId: null
         },
         include: [
             {
@@ -84,6 +88,7 @@ export const getProjectTasks: RequestHandler = async (req, res, next) => {
         attributes: taskAttributesToShow,
         where: {
             projectId,
+            parentTaskId: null
         },
         include: [
             {
@@ -191,4 +196,48 @@ export const createTask: RequestHandler<
     });
 
     res.status(201).json({ createdTask });
+};
+
+export const updateTask: RequestHandler<
+    unknown,
+    unknown,
+    { user; task: UpdateTaskDTO }
+> = async (req, res, next) => {
+    const { user: currentUser, task } = req.body;
+
+    if (!isUpdateTaskDTO(task)) {
+        return next(new Error(400, "Неверный формат задания!"));
+    }
+
+    const oldTask = await Task.findOne({
+        where: { id: task.id },
+    });
+
+    if (!oldTask) {
+        return next(new Error(404, "Задачи с таким идентификатором нет!"));
+    }
+
+    const hasAllUpdateRights = Boolean(
+        await UserProjectRole.findOne({
+            where: {
+                roleId: { [Op.in]: [UserRoleEnum.rp, UserRoleEnum.manager] },
+                projectId: oldTask.projectId,
+                userId: currentUser.id,
+            },
+        })
+    );
+    const hasOnlyExecutorRights =
+        !hasAllUpdateRights && oldTask.responsibleUserId === currentUser.id;
+
+    if (!hasAllUpdateRights && !hasOnlyExecutorRights) {
+        return next(new Error(401, "Нет прав обновления данной задачи"));
+    }
+
+    await Task.update(hasAllUpdateRights ? task : { statusId: task.statusId }, {
+        where: {
+            id: task.id,
+        },
+    });
+
+    res.status(200).json({ message: "Обновление прошло успешно!" });
 };
