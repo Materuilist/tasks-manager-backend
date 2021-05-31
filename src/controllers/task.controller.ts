@@ -8,6 +8,7 @@ import Error from "../entities/shared/error";
 import TaskPriority from "../model/task-priority.model";
 import TaskStatus from "../model/task-status.model";
 import Task from "../model/task.model";
+import Project from "../model/project.model";
 
 export const getTasks: RequestHandler = async (req, res, next) => {
     const { user: currentUser } = req.body;
@@ -25,6 +26,64 @@ export const getTasks: RequestHandler = async (req, res, next) => {
         attributes: taskAttributesToShow,
         where: {
             responsibleUserId: currentUser.id,
+        },
+        include: [
+            {
+                model: Task,
+                as: "childrenTasks",
+                attributes: taskAttributesToShow,
+            },
+            {
+                model: TaskStatus,
+                as: "status",
+                attributes: ["name"],
+            },
+            {
+                model: TaskPriority,
+                as: "priority",
+                attributes: ["name"],
+            },
+        ],
+    });
+
+    res.status(200).json({ tasks });
+};
+
+export const getProjectTasks: RequestHandler = async (req, res, next) => {
+    const { user: currentUser } = req.body;
+    const { projectId } = req.params;
+
+    if (!projectId) {
+        return next(new Error(400, "Не указан проект!"));
+    }
+    const isAllowedToView = Boolean(
+        await UserProjectRole.findOne({
+            where: {
+                projectId,
+                userId: currentUser.id,
+            },
+        })
+    );
+
+    if (!isAllowedToView) {
+        return next(
+            new Error(401, "Данный проект не доступен текущему пользователю!")
+        );
+    }
+
+    const taskAttributesToShow = [
+        "id",
+        "title",
+        "description",
+        "maxStart",
+        "maxEnd",
+        "statusId",
+        "priorityId",
+    ];
+    const tasks = await Task.findAll({
+        attributes: taskAttributesToShow,
+        where: {
+            projectId,
         },
         include: [
             {
