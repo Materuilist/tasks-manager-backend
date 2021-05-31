@@ -6,6 +6,7 @@ import sequalize from "./utils/database";
 
 import authRouter from "./routes/auth.router";
 import projectRouter from "./routes/project.router";
+import taskRouter from "./routes/task.router";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/", bodyParser.json({ limit: "5mb" }));
 
 app.use("/api/auth", authRouter);
 app.use("/api/project", projectRouter);
+app.use("/api/task", taskRouter);
 
 app.use("/", (error, req, res, next) => {
     if (error) {
