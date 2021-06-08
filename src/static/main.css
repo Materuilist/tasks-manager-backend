@@ -5,7 +5,7 @@ body {
     width: 100vw;
     height: 100vh;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #FCFCEB;
+    background-color: #fcfceb;
 }
 
 .auth-page {
@@ -68,4 +68,12 @@ header {
 header > span {
     font-size: calc(20rem / 14);
     color: #fcfceb;
+}
+
+*::-webkit-scrollbar {
+    width: .4rem;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #9b7c0f;
+    border-radius: 2rem;
 }

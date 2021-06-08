@@ -22,13 +22,25 @@ html(lang="en")
                         a.active(href=`/test-app/tasks?page=${currentPage}&userId=${userId}&login=${userLogin}`)=currentPage
                     a(arrow="arrow-forward" disabled=`${!nextPageExists}` href=`${nextPageExists? `/test-app/tasks?page=${+currentPage+1}&userId=${userId}&login=${userLogin}`:'#'}`)
             div.tasks-container
-                each task in tasks
-                    div.task-row 
-                        h5=task.title
-                        span=task.project.title
-                        div 
-                            span=task.maxStart
-                            span=task.maxEnd
-                        span=task.description
-                        span=task.priority.name
-                        span=task.status.name
+                table
+                    thead 
+                        th
+                        th Название
+                        th Проект
+                        th Описание
+                        th Дедлайн
+                        th Статус
+                        th Приоритет
+                    tbody
+                        each task in tasks
+                            tr
+                                td
+                                td=task.title
+                                td=task.project.title
+                                td=task.description
+                                td 
+                                    div 
+                                        p=task.maxStart
+                                        p=task.maxEnd
+                                td=task.priority.name
+                                td=task.status.name

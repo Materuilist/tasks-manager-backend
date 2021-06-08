@@ -5,16 +5,6 @@
     flex-direction: column;
 }
 
-.tasks-container {
-    width: 100%;
-    flex: 1;
-    overflow: auto;
-}
-
-.task-row {
-    padding-left: 1rem;
-}
-
 .table-heading {
     display: flex;
     justify-content: space-between;
@@ -40,8 +30,8 @@
     height: calc(18rem / 14);
 }
 
-.pagination a[disabled=true]{
-    opacity: .3;
+.pagination a[disabled="true"] {
+    opacity: 0.3;
     cursor: not-allowed;
 }
 
@@ -72,4 +62,95 @@
     opacity: 0.7;
 
     text-decoration: underline;
+}
+
+.tasks-container {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 calc(25rem / 14) 1rem 1rem;
+}
+
+.tasks-container table {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-collapse: collapse;
+}
+
+.tasks-container thead tr,
+.tasks-container tbody tr {
+    display: flex;
+}
+
+.tasks-container thead {
+    width: calc(100% - 0.4rem); /*-scroll*/
+}
+
+.tasks-container tbody {
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.tasks-container td,
+.tasks-container th {
+    border-right: calc(1.2rem / 14) solid #9b7c0f;
+    border-bottom: calc(1.2rem / 14) solid #9b7c0f;
+}
+
+.tasks-container td:first-of-type,
+.tasks-container th:first-of-type {
+    border-left: calc(1.2rem / 14) solid #9b7c0f;
+    border-right: none;
+}
+
+.tasks-container th {
+    border-top: calc(1.2rem / 14) solid #9b7c0f;
+}
+
+.tasks-container th:first-of-type {
+    border-radius: calc(10rem / 14) 0 0 0;
+}
+
+.tasks-container th:last-of-type {
+    border-radius: 0 calc(10rem / 14) 0 0;
+}
+
+.tasks-container tr:last-of-type td:last-of-type {
+    border-radius: 0 0 calc(10rem / 14) 0;
+}
+
+.tasks-container tr:last-of-type td:first-of-type {
+    border-radius: 0 0 0 calc(10rem / 14);
+}
+
+.tasks-container th:first-of-type,
+.tasks-container td:first-of-type {
+    flex: 1 0 5%;
+}
+.tasks-container th:nth-of-type(2),
+.tasks-container td:nth-of-type(2) {
+    flex: 1 0 16%;
+}
+.tasks-container th:nth-of-type(3),
+.tasks-container td:nth-of-type(3) {
+    flex: 1 0 16%;
+}
+.tasks-container th:nth-of-type(4),
+.tasks-container td:nth-of-type(4) {
+    flex: 1 0 14%;
+}
+.tasks-container th:nth-of-type(5),
+.tasks-container td:nth-of-type(5) {
+    flex: 1 0 11%;
+}
+.tasks-container th:nth-of-type(6),
+.tasks-container td:nth-of-type(6) {
+    flex: 1 0 10%;
+}
+.tasks-container th:nth-of-type(7),
+.tasks-container td:nth-of-type(7) {
+    flex: 1 0 8%;
 }
