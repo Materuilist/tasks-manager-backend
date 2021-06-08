@@ -1,0 +1,34 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Document
+        link(rel="stylesheet", href="/main.css")
+        link(rel="stylesheet", href="/tasks.css")
+    body 
+        div.task-page
+            header
+                span=userLogin
+            div.table-heading
+                h3 Ваши задачи
+                div.pagination
+                    a(arrow="arrow" disabled=`${currentPage == 1}` href=`${currentPage == 1 ? '#' : `/test-app/tasks?page=${+currentPage-1}&userId=${userId}&login=${userLogin}`}`)
+                    if currentPage == 1
+                        a.active(href=`/test-app/tasks?page=${1}&userId=${userId}&login=${userLogin}`)=1
+                    else 
+                        a(href=`/test-app/tasks?page=${1}&userId=${userId}&login=${userLogin}`)=1
+                        a.active(href=`/test-app/tasks?page=${currentPage}&userId=${userId}&login=${userLogin}`)=currentPage
+                    a(arrow="arrow-forward" disabled=`${!nextPageExists}` href=`${nextPageExists? `/test-app/tasks?page=${+currentPage+1}&userId=${userId}&login=${userLogin}`:'#'}`)
+            div.tasks-container
+                each task in tasks
+                    div.task-row 
+                        h5=task.title
+                        span=task.project.title
+                        div 
+                            span=task.maxStart
+                            span=task.maxEnd
+                        span=task.description
+                        span=task.priority.name
+                        span=task.status.name

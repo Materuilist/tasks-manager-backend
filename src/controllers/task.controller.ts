@@ -29,13 +29,25 @@ export const getTasks: RequestHandler = async (req, res, next) => {
         attributes: taskAttributesToShow,
         where: {
             responsibleUserId: currentUser.id,
-            parentTaskId: null
+            parentTaskId: null,
         },
         include: [
             {
                 model: Task,
                 as: "childrenTasks",
                 attributes: taskAttributesToShow,
+                include: [
+                    {
+                        model: TaskStatus,
+                        as: "status",
+                        attributes: ["name"],
+                    },
+                    {
+                        model: TaskPriority,
+                        as: "priority",
+                        attributes: ["name"],
+                    },
+                ],
             },
             {
                 model: TaskStatus,
@@ -88,7 +100,7 @@ export const getProjectTasks: RequestHandler = async (req, res, next) => {
         attributes: taskAttributesToShow,
         where: {
             projectId,
-            parentTaskId: null
+            parentTaskId: null,
         },
         include: [
             {

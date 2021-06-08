@@ -23,6 +23,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use("/", bodyParser.urlencoded());
 app.use("/", bodyParser.json({ limit: "5mb" }));
 app.use(express.static(path.join(__dirname, "static")));
 

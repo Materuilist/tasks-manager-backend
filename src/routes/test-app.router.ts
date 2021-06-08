@@ -1,10 +1,15 @@
 import { Router } from "express";
 
-import { parseUser } from "../controllers/shared.controller";
-import { getAuth } from "../controllers/test-app.controller";
+import {
+    getAuth,
+    getTasksPage,
+    postAuth,
+} from "../controllers/test-app.controller";
 
 const router = Router();
 
 router.get("/auth", getAuth);
+router.post("/auth", postAuth);
+router.get("/tasks", getTasksPage);
 
 export default router;

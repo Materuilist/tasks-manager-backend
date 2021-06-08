@@ -1,0 +1,75 @@
+.task-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.tasks-container {
+    width: 100%;
+    flex: 1;
+    overflow: auto;
+}
+
+.task-row {
+    padding-left: 1rem;
+}
+
+.table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 calc(25rem / 14) 0 1rem;
+}
+
+.table-heading h3 {
+    color: #9b7c0f;
+    font-size: calc(24rem / 14);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+}
+
+.pagination a[arrow^="arrow"] {
+    background-image: url("/images/back-arrow.svg");
+    background-size: cover;
+    background-repeat: round;
+    width: calc(18rem / 14);
+    height: calc(18rem / 14);
+}
+
+.pagination a[disabled=true]{
+    opacity: .3;
+    cursor: not-allowed;
+}
+
+.pagination a:not(:last-child) {
+    margin-right: 1rem;
+}
+
+.pagination a:not(:first-child) {
+    margin-left: 1rem;
+}
+
+.pagination a[arrow="arrow-forward"] {
+    transform: rotate(180deg);
+}
+
+.pagination a {
+    font-size: calc(18rem / 14);
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    opacity: 0.7;
+
+    transition: opacity 0.3s ease-out;
+}
+
+.pagination a.active {
+    opacity: 0.7;
+
+    text-decoration: underline;
+}
