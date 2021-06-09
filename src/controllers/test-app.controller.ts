@@ -106,6 +106,11 @@ export const getTasksPage: RequestHandler<
             ...task.get({ plain: true }),
             maxStart: moment(task.maxStart).format("ll"),
             maxEnd: moment(task.maxEnd).format("ll"),
+            childrenTasks: (task as any).childrenTasks.map((childTask) => ({
+                ...childTask.get({ plain: true }),
+                maxStart: moment(childTask.maxStart).format("ll"),
+                maxEnd: moment(childTask.maxEnd).format("ll"),
+            })),
         })),
         nextPageExists,
         userLogin: login,

@@ -33,8 +33,9 @@ html(lang="en")
                         th Приоритет
                     tbody
                         each task in tasks
-                            tr
+                            tr(parent parent-id=`${task.id}`)
                                 td
+                                    img.toggler-icon(src="/images/toggler.svg")
                                 td=task.title
                                 td=task.project.title
                                 td=task.description
@@ -44,3 +45,16 @@ html(lang="en")
                                         p=task.maxEnd
                                 td=task.priority.name
                                 td=task.status.name
+                            each childTask in task.childrenTasks
+                                tr(parent-id=`${task.id}` hidden="true")
+                                    td
+                                    td=childTask.title
+                                    td=task.project.title
+                                    td=childTask.description
+                                    td 
+                                        div 
+                                            p=childTask.maxStart
+                                            p=childTask.maxEnd
+                                    td=childTask.priority.name
+                                    td=childTask.status.name
+    script(src="/scripts/table-hierarchy.js") 

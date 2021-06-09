@@ -77,3 +77,16 @@ header > span {
     background-color: #9b7c0f;
     border-radius: 2rem;
 }
+
+*[hidden="true"]{
+    display: none !important;
+}
+
+.toggler-icon{
+    cursor: pointer;
+    transition: transform .1s ease-out;
+}
+
+.toggler-icon.open{
+    transform: rotate(180deg);
+}
