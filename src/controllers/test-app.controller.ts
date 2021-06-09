@@ -63,12 +63,12 @@ export const getTasksPage: RequestHandler<
                         {
                             model: TaskStatus,
                             as: "status",
-                            attributes: ["name"],
+                            attributes: ["id", "name"],
                         },
                         {
                             model: TaskPriority,
                             as: "priority",
-                            attributes: ["name"],
+                            attributes: ["id", "name"],
                         },
                     ],
                 },

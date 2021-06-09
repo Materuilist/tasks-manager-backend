@@ -29,8 +29,8 @@ html(lang="en")
                         th Проект
                         th Описание
                         th Дедлайн
-                        th Статус
                         th Приоритет
+                        th Статус
                     tbody
                         each task in tasks
                             tr(parent parent-id=`${task.id}`)
@@ -43,8 +43,8 @@ html(lang="en")
                                     div 
                                         p=task.maxStart
                                         p=task.maxEnd
-                                td=task.priority.name
-                                td=task.status.name
+                                td(class=`priority-${task.priority.id}`)=task.priority.name
+                                td(class=`status-${task.status.id}`)=task.status.name
                             each childTask in task.childrenTasks
                                 tr(parent-id=`${task.id}` hidden="true")
                                     td
@@ -55,6 +55,6 @@ html(lang="en")
                                         div 
                                             p=childTask.maxStart
                                             p=childTask.maxEnd
-                                    td=childTask.priority.name
-                                    td=childTask.status.name
+                                    td(class=`priority-${childTask.priority.id}`)=childTask.priority.name
+                                    td(class=`priority-${childTask.status.id}`)=childTask.status.name
     script(src="/scripts/table-hierarchy.js") 
