@@ -45,9 +45,14 @@ html(lang="en")
                                         p=task.maxEnd
                                 td(class=`priority-${task.priority.id}`)=task.priority.name
                                 td(class=`status-${task.status.id}`)=task.status.name
-                            each childTask in task.childrenTasks
+                            each childTask, childIndex in task.childrenTasks
                                 tr(parent-id=`${task.id}` hidden="true")
                                     td
+                                        if childIndex == task.childrenTasks.length - 1
+                                            hr.half
+                                        else
+                                            hr.full
+                                        hr
                                     td=childTask.title
                                     td=task.project.title
                                     td=childTask.description

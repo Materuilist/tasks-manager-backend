@@ -165,6 +165,31 @@
     flex: 1 0 8%;
 }
 
+tr:not([parent]) td:first-of-type{
+    position: relative;
+    padding: 0;
+}
+
+tr:not([parent]) td:first-of-type hr{
+    position: absolute;
+    left: 50%;
+    margin: 0;
+    background-color: #9B7C0F;
+}
+tr:not([parent]) td:first-of-type hr.full:first-of-type{
+    height: 100%;
+    width: calc(1rem/14);
+}
+tr:not([parent]) td:first-of-type hr.half:first-of-type{
+    top: 0;
+    height: 47%;
+    width: calc(1rem/14);
+}
+tr:not([parent]) td:first-of-type hr:last-of-type{
+    width: 50%;
+    height: calc(1rem/14);
+}
+
 .status-1 {
     color: #2f8acb;
 }
