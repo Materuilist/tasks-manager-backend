@@ -42,6 +42,7 @@ html(lang="en")
                                 td 
                                     div 
                                         p=task.maxStart
+                                        img.term-transition-arrow(src="/images/thin-arrow-down.svg")
                                         p=task.maxEnd
                                 td(class=`priority-${task.priority.id}`)=task.priority.name
                                 td(class=`status-${task.status.id}`)=task.status.name
@@ -59,6 +60,7 @@ html(lang="en")
                                     td 
                                         div 
                                             p=childTask.maxStart
+                                            img.term-transition-arrow(src="/images/thin-arrow-down.svg")
                                             p=childTask.maxEnd
                                     td(class=`priority-${childTask.priority.id}`)=childTask.priority.name
                                     td(class=`priority-${childTask.status.id}`)=childTask.status.name

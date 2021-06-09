@@ -120,6 +120,13 @@
     padding: calc(6rem / 14) 0;
 }
 
+.tasks-container td:nth-of-type(5) p:first-of-type{
+    margin-bottom: calc(4rem / 14);
+}
+.tasks-container td:nth-of-type(5) p:last-of-type{
+    margin-top: calc(4rem / 14);
+}
+
 .tasks-container th:first-of-type {
     border-radius: calc(10rem / 14) 0 0 0;
 }
@@ -182,7 +189,7 @@ tr:not([parent]) td:first-of-type hr.full:first-of-type{
 }
 tr:not([parent]) td:first-of-type hr.half:first-of-type{
     top: 0;
-    height: 47%;
+    height: 50%;
     width: calc(1rem/14);
 }
 tr:not([parent]) td:first-of-type hr:last-of-type{
